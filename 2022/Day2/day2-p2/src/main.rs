@@ -5,7 +5,7 @@ fn hand_shape(p: char) -> i32 {
         'X' => 1,
         'Y' => 2,
         'Z' => 3,
-        _ => 0,
+        _ => unreachable!(),
     }
 }
 
@@ -14,7 +14,7 @@ fn change_hand(o: char, p: char) -> char {
         'X' => loose(o),
         'Y' => draw(o),
         'Z' => win(o),
-        _ => 'D',
+        _ => unreachable!(),
     }
 }
 
@@ -23,7 +23,7 @@ fn loose(o: char) -> char {
         'A' => 'Z',
         'B' => 'X',
         'C' => 'Y',
-        _ => 'D',
+        _ => unreachable!(),
     }
 }
 
@@ -32,7 +32,7 @@ fn win(o: char) -> char {
         'A' => 'Y',
         'B' => 'Z',
         'C' => 'X',
-        _ => 'D',
+        _ => unreachable!(),
     }
 }
 
@@ -41,7 +41,7 @@ fn draw(o: char) -> char {
         'A' => 'X',
         'B' => 'Y',
         'C' => 'Z',
-        _ => 'D',
+        _ => unreachable!(),
     }
 }
 
