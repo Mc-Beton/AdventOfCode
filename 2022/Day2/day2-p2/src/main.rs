@@ -62,9 +62,9 @@ fn main() {
     for l in cheet.lines() {
         let mut l = l.chars();
         let o = l.next().unwrap();
-        let p = l.last().unwrap();
-        let p = change_hand(o, p);
-        sum = sum + hand_shape(p) + round_result(o, p);
+        let p = change_hand(o, l.last().unwrap());
+        //let p = change_hand(o, p);
+        sum += hand_shape(p) + round_result(o, p);
     }
 
     println!("{sum}");
