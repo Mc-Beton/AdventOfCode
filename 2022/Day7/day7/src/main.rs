@@ -1,5 +1,6 @@
 use std::fs;
-use crate::Commands::{ToRoot, GoBack, GoToDir, List, FileIn, DirIn};
+use day7::Commands::{ToRoot, GoBack, GoToDir, List, FileIn, DirIn};
+use day7::{File, Dir, Commands};
 
 fn main() {
     
@@ -17,6 +18,8 @@ fn main() {
     let mut files: Vec<File> = Vec::new();
 
     let mut current_dir_idx: usize = 0;
+
+    let mut solution1 = 0;
 
     commands.iter().for_each(|com| {
         match com {
@@ -75,8 +78,6 @@ fn main() {
         }
     }
 
-    let mut solution1 = 0;
-
     for size in dir_size.iter() {
         if *size < 100000 {
             solution1 += size;
@@ -86,42 +87,4 @@ fn main() {
     println!("{}", solution1);
 }
 
-#[derive(Debug)]
-struct File {
-    size: usize,
-    name: String,
-}
 
-#[derive(Debug)]
-struct Dir {
-    name: String,
-    dirs: Vec<usize>,
-    files: Vec<usize>,
-    
-}
-
-enum Commands {
-    ToRoot,
-    GoBack,
-    GoToDir(String),
-    List,
-    FileIn(usize, String),
-    DirIn(String),
-}
-
-impl From<&str> for Commands {
-    fn from(line: &str) -> Self {
-        let lines = line.split_whitespace();
-        let words = lines.collect::<Vec<&str>>();
-        let command = match (words[0], words[1], words.get(2)) {
-            ("$", "cd", Some(&"/")) => ToRoot,
-            ("$", "cd", Some(&"..")) => GoBack,
-            ("$", "cd", Some(name)) => GoToDir(name.to_string()),
-            ("$", "ls", _) => List,
-            ("dir", name, _) => DirIn(name.to_string()),
-            (size, name, _) => FileIn(size.parse::<usize>().unwrap(),
-                                        name.to_string()),
-        };
-        command
-    }
-}
