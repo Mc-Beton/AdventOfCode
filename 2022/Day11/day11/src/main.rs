@@ -10,14 +10,14 @@ fn main() {
         let m = Monkey {
             items: {
                 let l1 = mon[1].replace("Starting items:", "");
-                l1.replace(",", "");
-                l1.split(' ').map(|n| n.parse::<usize>().unwrap()).collect()   
+                let l = l1.replace(",", "");
+                l.split_whitespace().map(|n| n.parse::<usize>().unwrap()).collect()  
             },
             operation: {
                 let l2: Vec<&str> = mon[2].split(' ').collect();
                 let oper = Operation {
-                    sub: l2.last().unwrap().parse::<usize>().unwrap(),
-                    op: l2.get(l2.len()-1).unwrap().chars().next().expect("this must be a sign"),
+                    sub: l2.last().unwrap(),
+                    op: l2.get(l2.len()-2).unwrap().chars().next().expect("this must be a sign"),
                 };
                 oper
             },
@@ -36,35 +36,45 @@ fn main() {
         };
         monkeys.push(m);
     }
-
+    let mut after_20_rounds: Vec<Monkey> = {
+        for _ in 0..19 {
+            monkeys.iter().map(|m| m)
+        }   
+    }
 }
 
-struct Monkey {
+#[derive(Debug)]
+struct Monkey<'a> {
     items: Vec<usize>,
-    operation: Operation,
+    operation: Operation<'a>,
     test: usize,
     pass: usize,
     fail: usize,
 }
 
-struct Operation {
-    sub: usize,
+#[derive(Debug)]
+struct Operation<'a> {
+    sub: &'a str,
     op: char
 }
 
-impl Operation {
+impl Operation<'_> {
     fn do_op(&self, old: usize) -> usize {
+        let mut sub = 0;
+        if self.sub.to_string() == "old" { sub = old; } 
+        else { sub = self.sub.parse::<usize>().unwrap(); }
+
         match self.op {
-            '+' => old + self.sub,
-            '-' => old - self.sub,
-            '*' => old * self.sub,
-            '/' => old / self.sub,
+            '+' => old + sub,
+            '-' => old - sub,
+            '*' => old * sub,
+            '/' => old / sub,
             _ => 0,
         }
     }
 }
 
-impl Monkey {
+impl Monkey<'_> {
     fn test_item(&self, item: usize) -> usize {
         item/self.test
     }
