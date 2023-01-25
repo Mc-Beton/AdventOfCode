@@ -1,11 +1,45 @@
 use std::fs;
 
 fn main() {
-    let monkeys = fs::read_to_string("mokey_list.txt").unwrap();
+    let monks = fs::read_to_string("monkey_list.txt").unwrap();
+    let monkey_list: Vec<_> = monks.split('\n').collect();
+
+    let mut monkeys: Vec<Monkey> = Vec::new();
+
+    for mon in monkey_list.chunks(7) {
+        let m = Monkey {
+            items: {
+                let l1 = mon[1].replace("Starting items:", "");
+                l1.replace(",", "");
+                l1.split(' ').map(|n| n.parse::<usize>().unwrap()).collect()   
+            },
+            operation: {
+                let l2: Vec<&str> = mon[2].split(' ').collect();
+                let oper = Operation {
+                    sub: l2.last().unwrap().parse::<usize>().unwrap(),
+                    op: l2.get(l2.len()-1).unwrap().chars().next().expect("this must be a sign"),
+                };
+                oper
+            },
+            test: {
+                let l3: Vec<&str> = mon[3].split(' ').collect();
+                l3.last().unwrap().parse::<usize>().unwrap()
+            },
+            pass: {
+                let l4: Vec<&str> = mon[4].split(' ').collect();
+                l4.last().unwrap().parse::<usize>().unwrap()
+            },
+            fail: {
+                let  l5: Vec<&str> = mon[5].split(' ').collect();
+                l5.last().unwrap().parse::<usize>().unwrap()
+            },
+        };
+        monkeys.push(m);
+    }
+
 }
 
 struct Monkey {
-    num: usize,
     items: Vec<usize>,
     operation: Operation,
     test: usize,
@@ -31,9 +65,7 @@ impl Operation {
 }
 
 impl Monkey {
-    fn test_item(&self, it: usize) -> usize {
-        it/self.test
+    fn test_item(&self, item: usize) -> usize {
+        item/self.test
     }
 }
-
-
