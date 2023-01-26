@@ -1,4 +1,6 @@
 use std::fs;
+use itertools::Itertools;
+use day11::{Operation, Monkey};
 
 fn main() {
     let monks = fs::read_to_string("monkey_list.txt").unwrap();
@@ -33,49 +35,39 @@ fn main() {
                 let  l5: Vec<&str> = mon[5].split(' ').collect();
                 l5.last().unwrap().parse::<usize>().unwrap()
             },
+            inspections: 0,
         };
         monkeys.push(m);
     }
-    let mut after_20_rounds: Vec<Monkey> = {
-        for _ in 0..19 {
-            monkeys.iter().map(|m| m)
-        }   
-    }
-}
 
-#[derive(Debug)]
-struct Monkey<'a> {
-    items: Vec<usize>,
-    operation: Operation<'a>,
-    test: usize,
-    pass: usize,
-    fail: usize,
-}
+    let after_20_rounds: Vec<Monkey> = {
+        for _ in 0..20 {
+            for i in 0..monkeys.len() {
+                let monkey = &mut monkeys[i];
+                let mut items_to_send = Vec::new();
+                while monkey.items.len() > 0 {
+                    let item = monkey.items.remove(0);
+                    monkey.inspections += 1;
 
-#[derive(Debug)]
-struct Operation<'a> {
-    sub: &'a str,
-    op: char
-}
+                    let worry_lvl = monkey.operation.get_worry_level(item);
 
-impl Operation<'_> {
-    fn do_op(&self, old: usize) -> usize {
-        let mut sub = 0;
-        if self.sub.to_string() == "old" { sub = old; } 
-        else { sub = self.sub.parse::<usize>().unwrap(); }
+                    let m_id = match monkey.test_item(worry_lvl) {
+                        0 => monkey.pass,
+                        _ => monkey.fail,
+                    };
+                    items_to_send.push((m_id, worry_lvl));
+                };
+                for (m_id, item) in items_to_send {
+                    monkeys[m_id].items.push(item);
+                }
+            };
+        };
+        monkeys   
+    };
 
-        match self.op {
-            '+' => old + sub,
-            '-' => old - sub,
-            '*' => old * sub,
-            '/' => old / sub,
-            _ => 0,
-        }
-    }
-}
+    let mut monkeys_sorted = after_20_rounds.iter().map(|m| m.inspections).collect_vec();
+    monkeys_sorted.sort();
+    let solution1 = monkeys_sorted.last().unwrap() * monkeys_sorted.get(monkeys_sorted.len() - 2).unwrap();
 
-impl Monkey<'_> {
-    fn test_item(&self, item: usize) -> usize {
-        item/self.test
-    }
+    println!("{}", solution1);
 }
