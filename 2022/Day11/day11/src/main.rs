@@ -67,7 +67,8 @@ fn main() {
 
     let mut monkeys_sorted = after_20_rounds.iter().map(|m| m.inspections).collect_vec();
     monkeys_sorted.sort();
-    let solution1 = monkeys_sorted.last().unwrap() * monkeys_sorted.get(monkeys_sorted.len() - 2).unwrap();
-
+    monkeys_sorted.reverse();
+    let solution1 = monkeys_sorted[0] * monkeys_sorted[1];
+    
     println!("{}", solution1);
 }
