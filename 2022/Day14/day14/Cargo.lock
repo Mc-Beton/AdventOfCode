@@ -6,6 +6,7 @@ version = 3
 name = "day14"
 version = "0.1.0"
 dependencies = [
+ "ingrid",
  "itertools",
 ]
 
@@ -14,6 +15,12 @@ name = "either"
 version = "1.8.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7fcaabb2fef8c910e7f4c7ce9f67a1283a1715879a7c230ca9d6d1ae31f16d91"
+
+[[package]]
+name = "ingrid"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "422647ce7cc9877d5d3ad19016a7ecbdb0c635cdfbca5d881ff9d306dea54fe7"
 
 [[package]]
 name = "itertools"
