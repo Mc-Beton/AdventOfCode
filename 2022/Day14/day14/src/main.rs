@@ -20,9 +20,11 @@ fn main() {
     let column_size = y_size.iter().max().unwrap();
 
     let row_dif = x_size.iter().min().unwrap();
-    let col_dif = y_size.iter().min().unwrap();
 
-    let mut rock_map = Grid::with_size(size!(row_size + 1, *column_size + 1), ".");
+    let mut rock_map = Grid::with_size(size!(row_size + 1, *column_size + 3), ".");
+
+    //add the abys line
+    rock_map.insert_row(*column_size + 2, vec![" "; row_size + 1]);
 
     rock.iter()
         .for_each(|line| line.iter()
@@ -59,16 +61,46 @@ fn main() {
         }
     ));
 
+    //add the source
+    rock_map[coord!(500 - row_dif, 0)] = "+";
+
+    let mut sand_pos = (500 - row_dif, 0);
+    let mut count = 0;
+
+    loop {
+        let down = rock_map.row(sand_pos.1 + 1)[sand_pos.0];
+        let down_left = rock_map.row(sand_pos.1 + 1)[sand_pos.0 - 1];
+        let down_right = rock_map.row(sand_pos.1 + 1)[sand_pos.0 + 1];
+
+        if down == "." || down == " " {
+            sand_pos = (sand_pos.0, sand_pos.1 + 1);
+            if down == " " {
+                break;
+            }
+        } else if down_left == "." || down_left == " " {
+            sand_pos = (sand_pos.0 - 1, sand_pos.1 + 1);
+            
+        } else if down_right == "." || down_right == " " {
+            sand_pos = (sand_pos.0 + 1, sand_pos.1 + 1);
+            
+        } else {
+            rock_map[coord!(sand_pos.0, sand_pos.1)] = "o";
+            count += 1;
+            sand_pos = (500 - row_dif, 0);
+        }
+    }
+
+    println!("{}", count);
+
     //print the grid
-    for r in 0..*column_size +1 {
+    for r in 0..*column_size + 3 {
         let mut row = String::new();
         for (_, rock) in rock_map.row(r).iterator().enumerate_coordinate() {
             let rs: char = rock.chars().next().unwrap();
             row.push(rs);
         }
         println!("{:?}", row);
-    }
-    
+    }  
 }
 
 #[derive(Debug, Clone)]
