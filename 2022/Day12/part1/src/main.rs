@@ -13,7 +13,7 @@ fn main() {
 
     let map = Array2::from_shape_vec((height, width), chars).unwrap();
 
-    println!("{:?}", map);
+    
 }
 
 #[derive(Debug)]
@@ -36,5 +36,22 @@ impl From<char> for Location {
             'E' => Location{signature: End, value: 'z'},
             b => Location{signature: Basic, value: b},
         }
+    }
+}
+
+impl Location {
+    fn get_value_as_int(&self) -> usize {
+        match self.value {
+            'a'..='z' => self.value as usize - 'a' as usize + 1,
+            _ => 0,
+        }
+    }
+
+    fn find_start(&self) -> bool {
+        matches!(self.value, Start)
+    }
+
+    fn find_end(&self) -> bool {
+        matches!(self.value, End)
     }
 }
